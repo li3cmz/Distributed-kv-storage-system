@@ -20,7 +20,7 @@ if __name__ == '__main__':
                          'node_3': ('localhost', 10003),
                        }
             }
-     
+
     node = Node(conf)
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

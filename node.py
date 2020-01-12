@@ -458,7 +458,8 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                             print("('----------------------------sendVoteToPeers connect error!")
 
                 vote_count = sum(list(self.vote_ids.values()))
-                if vote_count >= len(self.peers) // 2:
+                print("vote_count: ", vote_count, (len(self.peers)+1)//2)
+                if vote_count >= (len(self.peers)+1)//2:
                     logging.info('candidate: 2. become leader')
                     self.role = 'leader'
                     self.voted_for = None
