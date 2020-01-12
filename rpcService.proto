@@ -5,11 +5,11 @@ package rpcService;
 service RPC {
     rpc RequestVote(requestVoteRequest) returns (requsetVoteResponse) {}
     rpc AppendEntries(appendEntriesRequest) returns (appendEntriesResponse) {}
-    rpc Redirect(redirectRequest) returns (redirectResponse) {}
+    rpc PutDelRedirect(putDelRedirectRequest) returns (putDelRedirectResponse) {}
+    rpc GetRedirect(getRedirectRequest) returns (getRedirectResponse) {}
 
+    rpc PutDel(putDelRequest) returns (putDelResponse) {}
     rpc Get(getRequest) returns (getResponse) {}
-    rpc Put(putRequest) returns (putResponse) {}
-    rpc Del(delRequest) returns (delResponse) {}
     rpc Apply(applyRequest) returns (applyResponse) {}
 }
 
@@ -19,7 +19,6 @@ message requestVoteRequest {
     int32 last_log_index = 3;
     int32 last_log_term = 4;
 }
-
 message requsetVoteResponse {
     string responserId = 1;
     int32 responserTerm = 2;
@@ -34,11 +33,6 @@ message appendEntriesRequest {
     repeated string entries = 5;
     int32 leader_commit = 6;
 }
-
-
-
-
-
 message appendEntriesResponse {
     string responserId = 1;
     bool success = 2;
@@ -46,46 +40,63 @@ message appendEntriesResponse {
     string type = 4;
 }
 
-message redirectRequest {
+
+message getRedirectRequest {
     string key = 1;
     string value = 2;
     string type = 3;
     string clientport = 4;
+    string opera_type = 5;
 }
-message redirectResponse {
+message getRedirectResponse {
+    bool success = 1;
+    string error_msg = 2;
+    string value = 3;
+}
+
+
+
+message putDelRedirectRequest {
+    string key = 1;
+    string value = 2;
+    string type = 3;
+    string clientport = 4;
+    string opera_type = 5;
+}
+message putDelRedirectResponse {
     bool success = 1;
 }
 
-message getRequest {
-    string key = 1;
-}
 
-message getResponse {
-    string key = 1;
-    string value = 2;
-    bool exist = 3;
-    string error_msg = 4;
-}
 
-message putRequest {
+message putDelRequest {
     string key = 1;
     string value = 2;
     string type = 3;
     string clientport = 4;
+    string opera_type = 5;
 }
-
-message putResponse {
+message putDelResponse {
     bool success = 1;
     string error_msg = 2;
 }
 
-message delRequest {
 
+
+message getRequest {
+    string key = 1;
+    string value = 2;
+    string type = 3;
+    string clientport = 4;
+    string opera_type = 5;
+}
+message getResponse {
+    bool success = 1;
+    string error_msg = 2;
+    string value = 3;
 }
 
-message delResponse {
 
-}
 
 message applyRequest {
     int32 commit_index = 1;

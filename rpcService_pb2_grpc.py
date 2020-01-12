@@ -24,25 +24,25 @@ class RPCStub(object):
         request_serializer=rpcService__pb2.appendEntriesRequest.SerializeToString,
         response_deserializer=rpcService__pb2.appendEntriesResponse.FromString,
         )
-    self.Redirect = channel.unary_unary(
-        '/rpcService.RPC/Redirect',
-        request_serializer=rpcService__pb2.redirectRequest.SerializeToString,
-        response_deserializer=rpcService__pb2.redirectResponse.FromString,
+    self.PutDelRedirect = channel.unary_unary(
+        '/rpcService.RPC/PutDelRedirect',
+        request_serializer=rpcService__pb2.putDelRedirectRequest.SerializeToString,
+        response_deserializer=rpcService__pb2.putDelRedirectResponse.FromString,
+        )
+    self.GetRedirect = channel.unary_unary(
+        '/rpcService.RPC/GetRedirect',
+        request_serializer=rpcService__pb2.getRedirectRequest.SerializeToString,
+        response_deserializer=rpcService__pb2.getRedirectResponse.FromString,
+        )
+    self.PutDel = channel.unary_unary(
+        '/rpcService.RPC/PutDel',
+        request_serializer=rpcService__pb2.putDelRequest.SerializeToString,
+        response_deserializer=rpcService__pb2.putDelResponse.FromString,
         )
     self.Get = channel.unary_unary(
         '/rpcService.RPC/Get',
         request_serializer=rpcService__pb2.getRequest.SerializeToString,
         response_deserializer=rpcService__pb2.getResponse.FromString,
-        )
-    self.Put = channel.unary_unary(
-        '/rpcService.RPC/Put',
-        request_serializer=rpcService__pb2.putRequest.SerializeToString,
-        response_deserializer=rpcService__pb2.putResponse.FromString,
-        )
-    self.Del = channel.unary_unary(
-        '/rpcService.RPC/Del',
-        request_serializer=rpcService__pb2.delRequest.SerializeToString,
-        response_deserializer=rpcService__pb2.delResponse.FromString,
         )
     self.Apply = channel.unary_unary(
         '/rpcService.RPC/Apply',
@@ -69,7 +69,21 @@ class RPCServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def Redirect(self, request, context):
+  def PutDelRedirect(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def GetRedirect(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def PutDel(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -77,20 +91,6 @@ class RPCServicer(object):
     raise NotImplementedError('Method not implemented!')
 
   def Get(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def Put(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
-  def Del(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -117,25 +117,25 @@ def add_RPCServicer_to_server(servicer, server):
           request_deserializer=rpcService__pb2.appendEntriesRequest.FromString,
           response_serializer=rpcService__pb2.appendEntriesResponse.SerializeToString,
       ),
-      'Redirect': grpc.unary_unary_rpc_method_handler(
-          servicer.Redirect,
-          request_deserializer=rpcService__pb2.redirectRequest.FromString,
-          response_serializer=rpcService__pb2.redirectResponse.SerializeToString,
+      'PutDelRedirect': grpc.unary_unary_rpc_method_handler(
+          servicer.PutDelRedirect,
+          request_deserializer=rpcService__pb2.putDelRedirectRequest.FromString,
+          response_serializer=rpcService__pb2.putDelRedirectResponse.SerializeToString,
+      ),
+      'GetRedirect': grpc.unary_unary_rpc_method_handler(
+          servicer.GetRedirect,
+          request_deserializer=rpcService__pb2.getRedirectRequest.FromString,
+          response_serializer=rpcService__pb2.getRedirectResponse.SerializeToString,
+      ),
+      'PutDel': grpc.unary_unary_rpc_method_handler(
+          servicer.PutDel,
+          request_deserializer=rpcService__pb2.putDelRequest.FromString,
+          response_serializer=rpcService__pb2.putDelResponse.SerializeToString,
       ),
       'Get': grpc.unary_unary_rpc_method_handler(
           servicer.Get,
           request_deserializer=rpcService__pb2.getRequest.FromString,
           response_serializer=rpcService__pb2.getResponse.SerializeToString,
-      ),
-      'Put': grpc.unary_unary_rpc_method_handler(
-          servicer.Put,
-          request_deserializer=rpcService__pb2.putRequest.FromString,
-          response_serializer=rpcService__pb2.putResponse.SerializeToString,
-      ),
-      'Del': grpc.unary_unary_rpc_method_handler(
-          servicer.Del,
-          request_deserializer=rpcService__pb2.delRequest.FromString,
-          response_serializer=rpcService__pb2.delResponse.SerializeToString,
       ),
       'Apply': grpc.unary_unary_rpc_method_handler(
           servicer.Apply,

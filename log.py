@@ -27,13 +27,13 @@ class Log(object):
         return len(self.entries)-1
 
     @property
-    def last_log_term(self): 
+    def last_log_term(self):
         return self.get_log_term(self.last_log_index)
 
 
     def get_log_term(self, log_index):
         '''
-        leader do 
+        leader do
         follower
         '''
         if log_index >= len(self.entries) :
@@ -55,7 +55,6 @@ class Log(object):
         # print('delete_entries')
         self.entries = self.entries[:max(0, prev_log_index)]
         self.save()
-        
 
     def append_entries(self, prev_log_index, entries):
         # print('append_entries')

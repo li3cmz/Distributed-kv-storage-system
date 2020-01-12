@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='rpcService',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x10rpcService.proto\x12\nrpcService\"f\n\x12requestVoteRequest\x12\x0c\n\x04term\x18\x01 \x01(\x05\x12\x13\n\x0b\x63\x61ndidateId\x18\x02 \x01(\t\x12\x16\n\x0elast_log_index\x18\x03 \x01(\x05\x12\x15\n\rlast_log_term\x18\x04 \x01(\x05\"W\n\x13requsetVoteResponse\x12\x13\n\x0bresponserId\x18\x01 \x01(\t\x12\x15\n\rresponserTerm\x18\x02 \x01(\x05\x12\x14\n\x0cvotedGranted\x18\x03 \x01(\x08\"\x8d\x01\n\x14\x61ppendEntriesRequest\x12\x0c\n\x04term\x18\x01 \x01(\x05\x12\x10\n\x08leaderId\x18\x02 \x01(\t\x12\x16\n\x0eprev_log_index\x18\x03 \x01(\x05\x12\x15\n\rprev_log_term\x18\x04 \x01(\x05\x12\x0f\n\x07\x65ntries\x18\x05 \x03(\t\x12\x15\n\rleader_commit\x18\x06 \x01(\x05\"b\n\x15\x61ppendEntriesResponse\x12\x13\n\x0bresponserId\x18\x01 \x01(\t\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x15\n\rresponserTerm\x18\x03 \x01(\x05\x12\x0c\n\x04type\x18\x04 \x01(\t\"O\n\x0fredirectRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x12\n\nclientport\x18\x04 \x01(\t\"#\n\x10redirectResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"\x19\n\ngetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\"K\n\x0bgetResponse\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\r\n\x05\x65xist\x18\x03 \x01(\x08\x12\x11\n\terror_msg\x18\x04 \x01(\t\"J\n\nputRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x12\n\nclientport\x18\x04 \x01(\t\"1\n\x0bputResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\terror_msg\x18\x02 \x01(\t\"\x0c\n\ndelRequest\"\r\n\x0b\x64\x65lResponse\"$\n\x0c\x61pplyRequest\x12\x14\n\x0c\x63ommit_index\x18\x01 \x01(\x05\" \n\rapplyResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xe6\x03\n\x03RPC\x12P\n\x0bRequestVote\x12\x1e.rpcService.requestVoteRequest\x1a\x1f.rpcService.requsetVoteResponse\"\x00\x12V\n\rAppendEntries\x12 .rpcService.appendEntriesRequest\x1a!.rpcService.appendEntriesResponse\"\x00\x12G\n\x08Redirect\x12\x1b.rpcService.redirectRequest\x1a\x1c.rpcService.redirectResponse\"\x00\x12\x38\n\x03Get\x12\x16.rpcService.getRequest\x1a\x17.rpcService.getResponse\"\x00\x12\x38\n\x03Put\x12\x16.rpcService.putRequest\x1a\x17.rpcService.putResponse\"\x00\x12\x38\n\x03\x44\x65l\x12\x16.rpcService.delRequest\x1a\x17.rpcService.delResponse\"\x00\x12>\n\x05\x41pply\x12\x18.rpcService.applyRequest\x1a\x19.rpcService.applyResponse\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x10rpcService.proto\x12\nrpcService\"f\n\x12requestVoteRequest\x12\x0c\n\x04term\x18\x01 \x01(\x05\x12\x13\n\x0b\x63\x61ndidateId\x18\x02 \x01(\t\x12\x16\n\x0elast_log_index\x18\x03 \x01(\x05\x12\x15\n\rlast_log_term\x18\x04 \x01(\x05\"W\n\x13requsetVoteResponse\x12\x13\n\x0bresponserId\x18\x01 \x01(\t\x12\x15\n\rresponserTerm\x18\x02 \x01(\x05\x12\x14\n\x0cvotedGranted\x18\x03 \x01(\x08\"\x8d\x01\n\x14\x61ppendEntriesRequest\x12\x0c\n\x04term\x18\x01 \x01(\x05\x12\x10\n\x08leaderId\x18\x02 \x01(\t\x12\x16\n\x0eprev_log_index\x18\x03 \x01(\x05\x12\x15\n\rprev_log_term\x18\x04 \x01(\x05\x12\x0f\n\x07\x65ntries\x18\x05 \x03(\t\x12\x15\n\rleader_commit\x18\x06 \x01(\x05\"b\n\x15\x61ppendEntriesResponse\x12\x13\n\x0bresponserId\x18\x01 \x01(\t\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x15\n\rresponserTerm\x18\x03 \x01(\x05\x12\x0c\n\x04type\x18\x04 \x01(\t\"f\n\x12getRedirectRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x12\n\nclientport\x18\x04 \x01(\t\x12\x12\n\nopera_type\x18\x05 \x01(\t\"H\n\x13getRedirectResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\terror_msg\x18\x02 \x01(\t\x12\r\n\x05value\x18\x03 \x01(\t\"i\n\x15putDelRedirectRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x12\n\nclientport\x18\x04 \x01(\t\x12\x12\n\nopera_type\x18\x05 \x01(\t\")\n\x16putDelRedirectResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\"a\n\rputDelRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x12\n\nclientport\x18\x04 \x01(\t\x12\x12\n\nopera_type\x18\x05 \x01(\t\"4\n\x0eputDelResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\terror_msg\x18\x02 \x01(\t\"^\n\ngetRequest\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\x12\x0c\n\x04type\x18\x03 \x01(\t\x12\x12\n\nclientport\x18\x04 \x01(\t\x12\x12\n\nopera_type\x18\x05 \x01(\t\"@\n\x0bgetResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x11\n\terror_msg\x18\x02 \x01(\t\x12\r\n\x05value\x18\x03 \x01(\t\"$\n\x0c\x61pplyRequest\x12\x14\n\x0c\x63ommit_index\x18\x01 \x01(\x05\" \n\rapplyResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\x99\x04\n\x03RPC\x12P\n\x0bRequestVote\x12\x1e.rpcService.requestVoteRequest\x1a\x1f.rpcService.requsetVoteResponse\"\x00\x12V\n\rAppendEntries\x12 .rpcService.appendEntriesRequest\x1a!.rpcService.appendEntriesResponse\"\x00\x12Y\n\x0ePutDelRedirect\x12!.rpcService.putDelRedirectRequest\x1a\".rpcService.putDelRedirectResponse\"\x00\x12P\n\x0bGetRedirect\x12\x1e.rpcService.getRedirectRequest\x1a\x1f.rpcService.getRedirectResponse\"\x00\x12\x41\n\x06PutDel\x12\x19.rpcService.putDelRequest\x1a\x1a.rpcService.putDelResponse\"\x00\x12\x38\n\x03Get\x12\x16.rpcService.getRequest\x1a\x17.rpcService.getResponse\"\x00\x12>\n\x05\x41pply\x12\x18.rpcService.applyRequest\x1a\x19.rpcService.applyResponse\"\x00\x62\x06proto3')
 )
 
 
@@ -241,37 +241,44 @@ _APPENDENTRIESRESPONSE = _descriptor.Descriptor(
 )
 
 
-_REDIRECTREQUEST = _descriptor.Descriptor(
-  name='redirectRequest',
-  full_name='rpcService.redirectRequest',
+_GETREDIRECTREQUEST = _descriptor.Descriptor(
+  name='getRedirectRequest',
+  full_name='rpcService.getRedirectRequest',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='rpcService.redirectRequest.key', index=0,
+      name='key', full_name='rpcService.getRedirectRequest.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='value', full_name='rpcService.redirectRequest.value', index=1,
+      name='value', full_name='rpcService.getRedirectRequest.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='type', full_name='rpcService.redirectRequest.type', index=2,
+      name='type', full_name='rpcService.getRedirectRequest.type', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='clientport', full_name='rpcService.redirectRequest.clientport', index=3,
+      name='clientport', full_name='rpcService.getRedirectRequest.clientport', index=3,
       number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='opera_type', full_name='rpcService.getRedirectRequest.opera_type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -289,19 +296,123 @@ _REDIRECTREQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=469,
-  serialized_end=548,
+  serialized_end=571,
 )
 
 
-_REDIRECTRESPONSE = _descriptor.Descriptor(
-  name='redirectResponse',
-  full_name='rpcService.redirectResponse',
+_GETREDIRECTRESPONSE = _descriptor.Descriptor(
+  name='getRedirectResponse',
+  full_name='rpcService.getRedirectResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='success', full_name='rpcService.redirectResponse.success', index=0,
+      name='success', full_name='rpcService.getRedirectResponse.success', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='error_msg', full_name='rpcService.getRedirectResponse.error_msg', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='rpcService.getRedirectResponse.value', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=573,
+  serialized_end=645,
+)
+
+
+_PUTDELREDIRECTREQUEST = _descriptor.Descriptor(
+  name='putDelRedirectRequest',
+  full_name='rpcService.putDelRedirectRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='rpcService.putDelRedirectRequest.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='rpcService.putDelRedirectRequest.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='rpcService.putDelRedirectRequest.type', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clientport', full_name='rpcService.putDelRedirectRequest.clientport', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='opera_type', full_name='rpcService.putDelRedirectRequest.opera_type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=647,
+  serialized_end=752,
+)
+
+
+_PUTDELREDIRECTRESPONSE = _descriptor.Descriptor(
+  name='putDelRedirectResponse',
+  full_name='rpcService.putDelRedirectResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='success', full_name='rpcService.putDelRedirectResponse.success', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -319,8 +430,105 @@ _REDIRECTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=550,
-  serialized_end=585,
+  serialized_start=754,
+  serialized_end=795,
+)
+
+
+_PUTDELREQUEST = _descriptor.Descriptor(
+  name='putDelRequest',
+  full_name='rpcService.putDelRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='rpcService.putDelRequest.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='rpcService.putDelRequest.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='rpcService.putDelRequest.type', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clientport', full_name='rpcService.putDelRequest.clientport', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='opera_type', full_name='rpcService.putDelRequest.opera_type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=797,
+  serialized_end=894,
+)
+
+
+_PUTDELRESPONSE = _descriptor.Descriptor(
+  name='putDelResponse',
+  full_name='rpcService.putDelResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='success', full_name='rpcService.putDelResponse.success', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='error_msg', full_name='rpcService.putDelResponse.error_msg', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=896,
+  serialized_end=948,
 )
 
 
@@ -338,6 +546,34 @@ _GETREQUEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='rpcService.getRequest.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='rpcService.getRequest.type', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='clientport', full_name='rpcService.getRequest.clientport', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='opera_type', full_name='rpcService.getRequest.opera_type', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -350,8 +586,8 @@ _GETREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=587,
-  serialized_end=612,
+  serialized_start=950,
+  serialized_end=1044,
 )
 
 
@@ -363,119 +599,22 @@ _GETRESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='key', full_name='rpcService.getResponse.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='rpcService.getResponse.value', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='exist', full_name='rpcService.getResponse.exist', index=2,
-      number=3, type=8, cpp_type=7, label=1,
-      has_default_value=False, default_value=False,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='error_msg', full_name='rpcService.getResponse.error_msg', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=614,
-  serialized_end=689,
-)
-
-
-_PUTREQUEST = _descriptor.Descriptor(
-  name='putRequest',
-  full_name='rpcService.putRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='key', full_name='rpcService.putRequest.key', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='value', full_name='rpcService.putRequest.value', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='type', full_name='rpcService.putRequest.type', index=2,
-      number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='clientport', full_name='rpcService.putRequest.clientport', index=3,
-      number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=691,
-  serialized_end=765,
-)
-
-
-_PUTRESPONSE = _descriptor.Descriptor(
-  name='putResponse',
-  full_name='rpcService.putResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='success', full_name='rpcService.putResponse.success', index=0,
+      name='success', full_name='rpcService.getResponse.success', index=0,
       number=1, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='error_msg', full_name='rpcService.putResponse.error_msg', index=1,
+      name='error_msg', full_name='rpcService.getResponse.error_msg', index=1,
       number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='rpcService.getResponse.value', index=2,
+      number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -492,56 +631,8 @@ _PUTRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=767,
-  serialized_end=816,
-)
-
-
-_DELREQUEST = _descriptor.Descriptor(
-  name='delRequest',
-  full_name='rpcService.delRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=818,
-  serialized_end=830,
-)
-
-
-_DELRESPONSE = _descriptor.Descriptor(
-  name='delResponse',
-  full_name='rpcService.delResponse',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=832,
-  serialized_end=845,
+  serialized_start=1046,
+  serialized_end=1110,
 )
 
 
@@ -571,8 +662,8 @@ _APPLYREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=847,
-  serialized_end=883,
+  serialized_start=1112,
+  serialized_end=1148,
 )
 
 
@@ -602,22 +693,22 @@ _APPLYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=885,
-  serialized_end=917,
+  serialized_start=1150,
+  serialized_end=1182,
 )
 
 DESCRIPTOR.message_types_by_name['requestVoteRequest'] = _REQUESTVOTEREQUEST
 DESCRIPTOR.message_types_by_name['requsetVoteResponse'] = _REQUSETVOTERESPONSE
 DESCRIPTOR.message_types_by_name['appendEntriesRequest'] = _APPENDENTRIESREQUEST
 DESCRIPTOR.message_types_by_name['appendEntriesResponse'] = _APPENDENTRIESRESPONSE
-DESCRIPTOR.message_types_by_name['redirectRequest'] = _REDIRECTREQUEST
-DESCRIPTOR.message_types_by_name['redirectResponse'] = _REDIRECTRESPONSE
+DESCRIPTOR.message_types_by_name['getRedirectRequest'] = _GETREDIRECTREQUEST
+DESCRIPTOR.message_types_by_name['getRedirectResponse'] = _GETREDIRECTRESPONSE
+DESCRIPTOR.message_types_by_name['putDelRedirectRequest'] = _PUTDELREDIRECTREQUEST
+DESCRIPTOR.message_types_by_name['putDelRedirectResponse'] = _PUTDELREDIRECTRESPONSE
+DESCRIPTOR.message_types_by_name['putDelRequest'] = _PUTDELREQUEST
+DESCRIPTOR.message_types_by_name['putDelResponse'] = _PUTDELRESPONSE
 DESCRIPTOR.message_types_by_name['getRequest'] = _GETREQUEST
 DESCRIPTOR.message_types_by_name['getResponse'] = _GETRESPONSE
-DESCRIPTOR.message_types_by_name['putRequest'] = _PUTREQUEST
-DESCRIPTOR.message_types_by_name['putResponse'] = _PUTRESPONSE
-DESCRIPTOR.message_types_by_name['delRequest'] = _DELREQUEST
-DESCRIPTOR.message_types_by_name['delResponse'] = _DELRESPONSE
 DESCRIPTOR.message_types_by_name['applyRequest'] = _APPLYREQUEST
 DESCRIPTOR.message_types_by_name['applyResponse'] = _APPLYRESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -650,19 +741,47 @@ appendEntriesResponse = _reflection.GeneratedProtocolMessageType('appendEntriesR
   })
 _sym_db.RegisterMessage(appendEntriesResponse)
 
-redirectRequest = _reflection.GeneratedProtocolMessageType('redirectRequest', (_message.Message,), {
-  'DESCRIPTOR' : _REDIRECTREQUEST,
+getRedirectRequest = _reflection.GeneratedProtocolMessageType('getRedirectRequest', (_message.Message,), {
+  'DESCRIPTOR' : _GETREDIRECTREQUEST,
   '__module__' : 'rpcService_pb2'
-  # @@protoc_insertion_point(class_scope:rpcService.redirectRequest)
+  # @@protoc_insertion_point(class_scope:rpcService.getRedirectRequest)
   })
-_sym_db.RegisterMessage(redirectRequest)
+_sym_db.RegisterMessage(getRedirectRequest)
 
-redirectResponse = _reflection.GeneratedProtocolMessageType('redirectResponse', (_message.Message,), {
-  'DESCRIPTOR' : _REDIRECTRESPONSE,
+getRedirectResponse = _reflection.GeneratedProtocolMessageType('getRedirectResponse', (_message.Message,), {
+  'DESCRIPTOR' : _GETREDIRECTRESPONSE,
   '__module__' : 'rpcService_pb2'
-  # @@protoc_insertion_point(class_scope:rpcService.redirectResponse)
+  # @@protoc_insertion_point(class_scope:rpcService.getRedirectResponse)
   })
-_sym_db.RegisterMessage(redirectResponse)
+_sym_db.RegisterMessage(getRedirectResponse)
+
+putDelRedirectRequest = _reflection.GeneratedProtocolMessageType('putDelRedirectRequest', (_message.Message,), {
+  'DESCRIPTOR' : _PUTDELREDIRECTREQUEST,
+  '__module__' : 'rpcService_pb2'
+  # @@protoc_insertion_point(class_scope:rpcService.putDelRedirectRequest)
+  })
+_sym_db.RegisterMessage(putDelRedirectRequest)
+
+putDelRedirectResponse = _reflection.GeneratedProtocolMessageType('putDelRedirectResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PUTDELREDIRECTRESPONSE,
+  '__module__' : 'rpcService_pb2'
+  # @@protoc_insertion_point(class_scope:rpcService.putDelRedirectResponse)
+  })
+_sym_db.RegisterMessage(putDelRedirectResponse)
+
+putDelRequest = _reflection.GeneratedProtocolMessageType('putDelRequest', (_message.Message,), {
+  'DESCRIPTOR' : _PUTDELREQUEST,
+  '__module__' : 'rpcService_pb2'
+  # @@protoc_insertion_point(class_scope:rpcService.putDelRequest)
+  })
+_sym_db.RegisterMessage(putDelRequest)
+
+putDelResponse = _reflection.GeneratedProtocolMessageType('putDelResponse', (_message.Message,), {
+  'DESCRIPTOR' : _PUTDELRESPONSE,
+  '__module__' : 'rpcService_pb2'
+  # @@protoc_insertion_point(class_scope:rpcService.putDelResponse)
+  })
+_sym_db.RegisterMessage(putDelResponse)
 
 getRequest = _reflection.GeneratedProtocolMessageType('getRequest', (_message.Message,), {
   'DESCRIPTOR' : _GETREQUEST,
@@ -677,34 +796,6 @@ getResponse = _reflection.GeneratedProtocolMessageType('getResponse', (_message.
   # @@protoc_insertion_point(class_scope:rpcService.getResponse)
   })
 _sym_db.RegisterMessage(getResponse)
-
-putRequest = _reflection.GeneratedProtocolMessageType('putRequest', (_message.Message,), {
-  'DESCRIPTOR' : _PUTREQUEST,
-  '__module__' : 'rpcService_pb2'
-  # @@protoc_insertion_point(class_scope:rpcService.putRequest)
-  })
-_sym_db.RegisterMessage(putRequest)
-
-putResponse = _reflection.GeneratedProtocolMessageType('putResponse', (_message.Message,), {
-  'DESCRIPTOR' : _PUTRESPONSE,
-  '__module__' : 'rpcService_pb2'
-  # @@protoc_insertion_point(class_scope:rpcService.putResponse)
-  })
-_sym_db.RegisterMessage(putResponse)
-
-delRequest = _reflection.GeneratedProtocolMessageType('delRequest', (_message.Message,), {
-  'DESCRIPTOR' : _DELREQUEST,
-  '__module__' : 'rpcService_pb2'
-  # @@protoc_insertion_point(class_scope:rpcService.delRequest)
-  })
-_sym_db.RegisterMessage(delRequest)
-
-delResponse = _reflection.GeneratedProtocolMessageType('delResponse', (_message.Message,), {
-  'DESCRIPTOR' : _DELRESPONSE,
-  '__module__' : 'rpcService_pb2'
-  # @@protoc_insertion_point(class_scope:rpcService.delResponse)
-  })
-_sym_db.RegisterMessage(delResponse)
 
 applyRequest = _reflection.GeneratedProtocolMessageType('applyRequest', (_message.Message,), {
   'DESCRIPTOR' : _APPLYREQUEST,
@@ -728,8 +819,8 @@ _RPC = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=920,
-  serialized_end=1406,
+  serialized_start=1185,
+  serialized_end=1722,
   methods=[
   _descriptor.MethodDescriptor(
     name='RequestVote',
@@ -750,39 +841,39 @@ _RPC = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
-    name='Redirect',
-    full_name='rpcService.RPC.Redirect',
+    name='PutDelRedirect',
+    full_name='rpcService.RPC.PutDelRedirect',
     index=2,
     containing_service=None,
-    input_type=_REDIRECTREQUEST,
-    output_type=_REDIRECTRESPONSE,
+    input_type=_PUTDELREDIRECTREQUEST,
+    output_type=_PUTDELREDIRECTRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='GetRedirect',
+    full_name='rpcService.RPC.GetRedirect',
+    index=3,
+    containing_service=None,
+    input_type=_GETREDIRECTREQUEST,
+    output_type=_GETREDIRECTRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
+    name='PutDel',
+    full_name='rpcService.RPC.PutDel',
+    index=4,
+    containing_service=None,
+    input_type=_PUTDELREQUEST,
+    output_type=_PUTDELRESPONSE,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
     name='Get',
     full_name='rpcService.RPC.Get',
-    index=3,
+    index=5,
     containing_service=None,
     input_type=_GETREQUEST,
     output_type=_GETRESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='Put',
-    full_name='rpcService.RPC.Put',
-    index=4,
-    containing_service=None,
-    input_type=_PUTREQUEST,
-    output_type=_PUTRESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='Del',
-    full_name='rpcService.RPC.Del',
-    index=5,
-    containing_service=None,
-    input_type=_DELREQUEST,
-    output_type=_DELRESPONSE,
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
