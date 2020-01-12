@@ -44,7 +44,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
 
         # volatile state on leaders
         # rule 1, 2
-        self.next_index = {_id: self.log.last_log_index + 1 for _id in self.peers}
+        self.next_index = {_id: self.log.last_log_index + 1 for _id in self.peers} #log_list最后一个index的下一个，也就是还是空的 #{16+1，16+1，16+1, ...}
         self.match_index = {_id: -1 for _id in self.peers}
 
         # append entries
@@ -57,16 +57,14 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         self.client_port = None
 
         # tick
-        self.t_heartbeat = 5
-        self.next_leader_election = 10
+        self.t_heartbeat = 1
+        self.next_leader_election = 2
         self.connect_timeout_in_seconds=0.1
         self.wait_s = (1, 2)
         ## 心跳或者entry msg计时器/或者叫选举计时器
         self.next_leader_election_timer_restart()
 
-        # TODO: 解决断开重连仍为leader的问题？
-        if self.role=='leader':
-            self.next_heartbeat_timer_restart()
+        self.kv = {}
 
     # tick func
     def next_leader_election_timer_restart(self):
@@ -89,7 +87,6 @@ class Node(rpcService_pb2_grpc.RPCServicer):
 
             self.current_term = data['current_term']
             self.voted_for = data['voted_for']
-
         else:
             self.save()
 
@@ -128,11 +125,15 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                         stub = rpcService_pb2_grpc.RPCStub(channel)
                         response = None
                         try:
+                            # print("prev_log_index: ",self.next_index[dst_id] - 1)#(16+1-1，就是我这个leader的log里面的最后一个)
+                            # print("prev_log_term: ",self.log.get_log_term(self.next_index[dst_id] - 1)) #(16+1-1，就是我这个leader的log里面的最后一个)
+                            # print("entries: ", self.log.get_entries(self.next_index[dst_id]))#没client entry的时候，这个是空的
+                            # print("self.commit_index: ", self.commit_index)
                             response = stub.AppendEntries(rpcService_pb2.appendEntriesRequest(term=self.current_term,
                                                                                         leaderId=self.id,
                                                                                         prev_log_index=self.next_index[dst_id] - 1,
                                                                                         prev_log_term=self.log.get_log_term(self.next_index[dst_id] - 1),
-                                                                                        entries=self.log.get_entries(self.next_index[dst_id]),
+                                                                                        entries=self.log.get_entries(self.next_index[dst_id]), #(16+1，就是我这个leader的log里面的最后一个的下一个|第0个)
                                                                                         leader_commit=self.commit_index), self.connect_timeout_in_seconds)
                         except:
                             print("send appendrpc connect error!")
@@ -146,6 +147,8 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         # 不为空，也不是从client发来的信息
         # 根据是headbeart还是append，决定要做什么事情
         '''
+        self.all_do()
+
         self.next_leader_election_timer_cancel()
         self.next_leader_election_timer_restart()
         if self.role == 'follower':
@@ -173,19 +176,26 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             self.voted_for = None
             self.save()
 
-        #heartbeat
-        if request.entries == []:
-            # 收到心跳包，candidate->follower
-            if self.role == 'candidate':
-                self.candidate_do(task='convertToFollower')
-            logging.info('          4. heartbeat')
-            return rpcService_pb2.appendEntriesResponse(responserId=self.id,
-            success=False, responserTerm=self.current_term,
-            type='heartbeat_response') #此处success与否并不重要
+        # #heartbeat
+        # if request.entries == []: #不为空，也可能是心跳包
+        #     # 收到心跳包，candidate->follower
+        #     if self.role == 'candidate':
+        #         self.candidate_do(task='convertToFollower')
+        #     logging.info('          4. heartbeat')
+
+        #     return rpcService_pb2.appendEntriesResponse(responserId=self.id,
+        #     success=False, responserTerm=self.current_term,
+        #     type='heartbeat_response') #此处success与否并不重要
+
+        if self.role == 'candidate': #不管是不是心跳包，收到了就得转为follower
+            self.candidate_do(task='convertToFollower')
+        if request.entries == []: #不为空，也可能是心跳包，所以定个标准，为空就是心跳包
+            logging.info('          4. heartbeat！')
+        else:
+            logging.info('          4. append_entries！')
 
         prev_log_index = request.prev_log_index
         prev_log_term = request.prev_log_term
-
         tmp_prev_log_term = self.log.get_log_term(prev_log_index)
 
         # append_entries: rule 2, 3
@@ -204,10 +214,14 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         else:
             logging.info('          4. success = True')
             logging.info('          5. send append_entries_response to leader ' + self.leader_id)
-            logging.info('          6. log append_entries')
-            logging.info('          7. log save')
 
-            self.log.append_entries(prev_log_index, [request.entries[0]])
+            if request.entries != []:
+                logging.info('          6. append_entries not None')
+                logging.info('          6. log append_entries')
+                logging.info('          7. log save')
+                print("111111prev_log_index: ",prev_log_index, [request.entries[0]])
+                print("type: ", type(list(request.entries)), list(request.entries))
+                self.log.append_entries(prev_log_index, list(request.entries))
 
             # append_entries rule 5
             leader_commit = request.leader_commit
@@ -324,6 +338,14 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         if self.commit_index > self.last_applied:
             self.last_applied = self.commit_index
             logging.info('all: 1. last_applied = ' + str(self.last_applied))
+            logging.info('all: 2. apply log[last_applied] to kv state machine')
+            last_applied = self.log.get_entries[self.log.last_log_index][0].split(" ") #"255 x 1578762179.732143 client_append_entries"
+
+            key = last_applied[1]
+            value = float(last_applied[2])
+            self.kv[key] = value
+            print("sever id: ", self.id, " kv: ", self.kv)
+
 
     def follower_do(self, task='becomeCandidate'):
         '''
@@ -417,6 +439,9 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             self.voted_for = self.id
             self.save()
             self.vote_ids = {_id: 0 for _id in self.peers}
+
+            # candidate开始发vote给all other servers
+            self.candidate_do(task='sendVoteToPeers')
             return
 
     def leader_do(self, data):
@@ -442,7 +467,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
 
 
         if data !=None and data.type == 'append_entries_response':
-            if data.responserTerm==self.current_term:#只处理不是heartbeat的response
+            if data.responserTerm==self.current_term:#不管是heartbeat or not都要处理
                 logging.info('leader：1. recv append_entries_response from follower ' + data.responserId)
                 if data.success == False:
                     self.next_index[data.responserId] -= 1

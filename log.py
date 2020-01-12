@@ -48,12 +48,11 @@ class Log(object):
         leader do
         '''
         # print('get_entries')
-        return self.entries[max(0, next_index):]
+        return self.entries[max(0, next_index):] #TODO
     
 
     def delete_entries(self, prev_log_index):
         # print('delete_entries')
-
         self.entries = self.entries[:max(0, prev_log_index)]
         self.save()
         
