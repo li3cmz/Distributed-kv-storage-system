@@ -99,7 +99,7 @@ def send():
     servers_ports = [10001,10002,10003,10004]
     connect_timeout_inseconds = 0.1
     operations = ['put', 'get', 'del']
-    client_port = str(10000)
+    client_port = str(10006)
     while True:
         port = random.choice(servers_ports)
         oper = random.choice(operations)
@@ -113,7 +113,7 @@ def send():
 # def recv():
 #     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 #     rpcService_pb2_grpc.add_RPCServicer_to_server(clientSever(), server)
-#     server.add_insecure_port('[::]:'+str(10000))
+#     server.add_insecure_port('[::]:'+str(10006))
 #     server.start()
 #     server.wait_for_termination()
 

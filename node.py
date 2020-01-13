@@ -296,7 +296,8 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         logging.info('ENTER Get')
         # TODO: 如果是leader，更新自己的entries，通知peers，大部分回复后执行并返回结果
         # TODO: 如果不是leader，则转发给leader
-        logging.info(self.role + ': ' + 'recv GET from client !!!!!!!!!!')
+        self.client_port = request.clientport
+        logging.info(self.role + ': ' + 'recv GET from client ' + self.client_port + '!!!!!!!!!!')
         if self.role =='follower' and self.leader_id:
             logging.info(self.role + ': ' + 'Getredirect: GET client_append_entries to leader ' + self.leader_id)
             with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
@@ -318,7 +319,6 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             print("\n")
             return rpcService_pb2.getResponse(success=False, error_msg='no leader!!!', value=None)
         else:
-            self.client_port = request.clientport
             key = request.key
             if key not in self.kv:
                 print("leader: GET Defeated!! Key not in leader state machine!!!")
@@ -342,7 +342,8 @@ class Node(rpcService_pb2_grpc.RPCServicer):
     def PutDel(self, request, context):
         logging.info('ENTER Put')
         # 如果不是leader，则转发给leader
-        logging.info(self.role + ': ' + 'recv PUTDEL from client !!!!!!!!!!')
+        self.client_port = request.clientport
+        logging.info(self.role + ': ' + 'recv PUTDEL from client ' + self.client_port + ' !!!!!!!!!!')
         if self.role =='follower' and self.leader_id:
             logging.info(self.role + ': ' + 'PutDelRedirect: client_append_entries to leader ' + self.leader_id)
             with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
@@ -361,7 +362,6 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             print("\n")
             return rpcService_pb2.putDelResponse(success=False, error_msg='no leader!!!')
         else: # TODO: 如果是leader，更新自己的entries，通知peers，大部分回复后执行并返回结果
-            self.client_port = request.clientport
             self.leader_do(request)
             print("\n")
             return rpcService_pb2.putDelResponse(success=True, error_msg=None)
@@ -459,7 +459,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
 
                 vote_count = sum(list(self.vote_ids.values()))
                 print("vote_count: ", vote_count, (len(self.peers)+1)//2)
-                if vote_count >= (len(self.peers)+1)//2:
+                if vote_count >= (len(self.peers)+1)//2:  #2/3 3/4
                     logging.info('candidate: 2. become leader')
                     self.role = 'leader'
                     self.voted_for = None
@@ -518,7 +518,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             entry_str = ' '.join(entry_list)
             self.log.append_entries(self.log.last_log_index, [entry_str])
 
-            logging.info('leader：1. recv append_entries from client')
+            logging.info('leader：1. recv append_entries from client ' + data.clientport)
             logging.info('leader：2. log append_entries')
             logging.info('leader：3. log save')
 
@@ -550,14 +550,6 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                 if count >= (len(self.peers)+1)//2: #2/3 3/4
                     self.commit_index = N
                     logging.info("leader：1. commit_index + 1, leader's commit index is " + str(self.commit_index))
-                    if self.client_port:
-                        with grpc.insecure_channel('localhost:'+self.client_port) as channel:
-                            stub = rpcService_pb2_grpc.RPCStub(channel)
-                            try:
-                                logging.info('----------------------------leader：2. leader send commit to client!!!')
-                                response = stub.Apply(rpcService_pb2.applyRequest(commit_index=self.commit_index), self.connect_timeout_in_seconds)
-                            except:
-                                print('----------------------------commit to client connect error!')
                     break
             else:
                 logging.info('leader：1. commit_index = ' + str(self.commit_index))
