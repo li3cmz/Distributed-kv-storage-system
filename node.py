@@ -137,7 +137,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                                                                                         entries=self.log.get_entries(self.next_index[dst_id]), #(16+1，就是我这个leader的log里面的最后一个的下一个|第0个)
                                                                                         leader_commit=self.commit_index), self.connect_timeout_in_seconds)
                         except:
-                            print("('----------------------------send appendrpc connect error!")
+                            print("----------------------------send appendrpc connect error!")
                         if response !=None and response.type!='heartbeat_response':
                             self.leader_do(data=response)
             # 发送完心跳包，重新开始计时
@@ -185,7 +185,6 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         prev_log_term = request.prev_log_term
         tmp_prev_log_term = self.log.get_log_term(prev_log_index)
 
-        print("tmp_prev_log_term: ", tmp_prev_log_term, "prev_log_index: ", prev_log_index)
         # append_entries: rule 2, 3
         # append_entries: rule 3
         if tmp_prev_log_term != prev_log_term:
@@ -258,7 +257,6 @@ class Node(rpcService_pb2_grpc.RPCServicer):
 
         # self.current_term = request.term
         if self.voted_for == None or self.voted_for == candidate_id:
-            # 测试点3:
             if self.role == 'leader' and request.last_log_index == self.log.last_log_index and request.last_log_term == self.log.last_log_term:
                 logging.info(self.role + ': 4. same log and ' + self.id + ' is leader already.')
                 logging.info(self.role + ': 5. send request_vote_response to candidate ' + request.candidateId)
@@ -311,7 +309,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                     else:
                         return rpcService_pb2.getResponse(success=False, error_msg=getRedirect_response.error_msg, value=None)
                 except:
-                    print("('----------------------------getRedirect connect error!")
+                    print("----------------------------getRedirect connect error!")
                     print("\n")
                     return rpcService_pb2.getResponse(success=False, error_msg='getRedirect connect error', value=None)
         elif self.role == 'candidate':
@@ -354,7 +352,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                     print("\n")
                     return rpcService_pb2.putDelResponse(success=putDelRedirect_response.success, error_msg=None)
                 except:
-                    print("('----------------------------putDelRedirectResponse connect error!")
+                    print("----------------------------putDelRedirectResponse connect error!")
                     print("\n")
                     return rpcService_pb2.putDelResponse(success=False, error_msg='putDelRedirectResponse connect error')
         elif self.role == 'candidate':
@@ -455,10 +453,9 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                                 logging.info('candidate: 1. recv request_vote_response from follower ' + str(self.peers[dst_id][0]) + ": " + str(self.peers[dst_id][1]))
                             self.vote_ids[response.responserId] = response.votedGranted
                         except:
-                            print("('----------------------------sendVoteToPeers connect error!")
+                            print("----------------------------sendVoteToPeers connect error!")
 
                 vote_count = sum(list(self.vote_ids.values()))
-                print("vote_count: ", vote_count, (len(self.peers)+1)//2)
                 if vote_count >= (len(self.peers)+1)//2:  #2/3 3/4
                     logging.info('candidate: 2. become leader')
                     self.role = 'leader'
@@ -513,7 +510,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             entry_list.append(data.key)
             entry_list.append(data.value)
             entry_list.append(data.type)
-            entry_list.append(data.clientport)
+            # entry_list.append(data.clientport)
             entry_list.append(data.opera_type)
             entry_str = ' '.join(entry_list)
             self.log.append_entries(self.log.last_log_index, [entry_str])
