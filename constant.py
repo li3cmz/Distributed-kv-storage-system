@@ -1,0 +1,3 @@
+ELECTLEADER = 'ElectLeader'
+HEARTBEAT = 'Heartbeat'
+

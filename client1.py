@@ -98,7 +98,7 @@ def Get(port, client_port, connect_timeout_inseconds, opera_type):
 def send():
     servers_ports = [10001,10002,10003,10004]
     connect_timeout_inseconds = 0.1
-    operations = ['put', 'get', 'del']
+    operations = ['get']#, 'get', 'del']
     client_port = str(10000)
     while True:
         port = random.choice(servers_ports)
