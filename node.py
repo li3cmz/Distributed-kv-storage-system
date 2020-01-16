@@ -278,9 +278,10 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             leader_commit = request.leader_commit
             if leader_commit > self.commit_index:
                 commit_index = min(leader_commit, self.log.last_log_index)
-                self.commit_index = commit_index
+                self.commit_index = commit_index+1###debug
                 # logging.info(self.role + ': 7. commit_index = ' + str(commit_index))
 
+            self.all_do()
             # print("\n")
             return rpcService_pb2.appendEntriesResponse(responserId=self.id,
             success=True, responserTerm=self.current_term,
@@ -389,47 +390,68 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         self.client_port = request.clientport
         # logging.info(self.role + ': ' + 'recv GET from client ' + self.client_port + '!!!!!!!!!!')
         if self.role =='follower' and self.leader_id:
-            self.cmd_output = {}
-            self.cmd_output['msgType']='get'
-            self.cmd_output['msg']='received GET command from client'
-            self.cmd_output['localID']=self.id
-            print(str(self.cmd_output))
-            # logging.info(self.role + ': ' + 'Getredirect: GET client_append_entries to leader ' + self.leader_id)
-            with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
-                stub = rpcService_pb2_grpc.RPCStub(channel)
-                try:
-                    getRedirect_response = stub.GetRedirect(rpcService_pb2.getRedirectRequest(key=request.key, \
-                        value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type), self.connect_timeout_in_seconds)
-                    # print("\n")
-                    self.cmd_output = {}
-                    self.cmd_output['msgType']='info'
-                    self.cmd_output['msg']='redirect clientRequest to leader success'
-                    self.cmd_output['localID']=self.id
-                    self.cmd_output['leaderID']=self.leader_id
-                    print(str(self.cmd_output))
-                    if getRedirect_response.success:
-                        return rpcService_pb2.getResponse(success=True, error_msg=None, value=getRedirect_response.value)
-                    else:
-                        return rpcService_pb2.getResponse(success=False, error_msg=getRedirect_response.error_msg, value=None)
-                except:
-                    self.cmd_output = {}
-                    self.cmd_output['msgType']='info'
-                    self.cmd_output['msg']=' redirect clientRequest to leader failed, maybe connect error'
-                    self.cmd_output['localID']=self.id
-                    self.cmd_output['leaderID']=self.leader_id
-                    print(str(self.cmd_output))
-                    # print("----------------------------getRedirect connect error!")
-                    # print("\n")
-                    return rpcService_pb2.getResponse(success=False, error_msg='getRedirect connect error', value=None)
+            if request.opera_type == 'get':
+                self.cmd_output = {}
+                self.cmd_output['msgType']='get'
+                self.cmd_output['msg']='received GET command from client'
+                self.cmd_output['localID']=self.id
+                print(str(self.cmd_output))
+                # logging.info(self.role + ': ' + 'Getredirect: GET client_append_entries to leader ' + self.leader_id)
+                with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
+                    stub = rpcService_pb2_grpc.RPCStub(channel)
+                    try:
+                        getRedirect_response = stub.GetRedirect(rpcService_pb2.getRedirectRequest(key=request.key, \
+                            value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type), self.connect_timeout_in_seconds)
+                        # print("\n")
+                        self.cmd_output = {}
+                        self.cmd_output['msgType']='info'
+                        self.cmd_output['msg']='redirect clientRequest to leader success'
+                        self.cmd_output['localID']=self.id
+                        self.cmd_output['leaderID']=self.leader_id
+                        print(str(self.cmd_output))
+                        if getRedirect_response.success:
+                            return rpcService_pb2.getResponse(success=True, error_msg=None, value=getRedirect_response.value)
+                        else:
+                            return rpcService_pb2.getResponse(success=False, error_msg=getRedirect_response.error_msg, value=None)
+                    except:
+                        self.cmd_output = {}
+                        self.cmd_output['msgType']='info'
+                        self.cmd_output['msg']=' redirect clientRequest to leader failed, maybe connect error'
+                        self.cmd_output['localID']=self.id
+                        self.cmd_output['leaderID']=self.leader_id
+                        print(str(self.cmd_output))
+                        # print("----------------------------getRedirect connect error!")
+                        # print("\n")
+                        return rpcService_pb2.getResponse(success=False, error_msg='getRedirect connect error', value=None)
+            elif request.opera_type == 'get_noredirect':
+                self.cmd_output = {}
+                self.cmd_output['msgType']='get_noredirect'
+                self.cmd_output['msg']='received GET command from client'
+                self.cmd_output['localID']=self.id
+                print(str(self.cmd_output))
+                if request.key not in self.kv:
+                    return rpcService_pb2.getResponse(success=False, error_msg="GET Defeated!! Key not in leader state machine!!!", value=None)
+                return rpcService_pb2.getResponse(success=True, error_msg=None, value=self.kv[request.key])
+
         elif self.role == 'candidate':
             # logging.info(self.role + ': ' + 'no leader!!!')
             # print("\n")
-            self.cmd_output = {}
-            self.cmd_output['msgType']='get'
-            self.cmd_output['msg']="received GET command from client, however, there is no leader"
-            self.cmd_output['localID']=self.id
-            print(str(self.cmd_output))
-            return rpcService_pb2.getResponse(success=False, error_msg='no leader!!!', value=None)
+            if request.opera_type=='get':
+                self.cmd_output = {}
+                self.cmd_output['msgType']='get'
+                self.cmd_output['msg']="received GET command from client, however, there is no leader"
+                self.cmd_output['localID']=self.id
+                print(str(self.cmd_output))
+                return rpcService_pb2.getResponse(success=False, error_msg='no leader!!!', value=None)
+            elif request.opera_type == 'get_noredirect':
+                self.cmd_output = {}
+                self.cmd_output['msgType']='get_noredirect'
+                self.cmd_output['msg']='received GET command from client'
+                self.cmd_output['localID']=self.id
+                print(str(self.cmd_output))
+                if request.key not in self.kv:
+                    return rpcService_pb2.getResponse(success=False, error_msg="GET Defeated!! Key not in leader state machine!!!", value=None)
+                return rpcService_pb2.getResponse(success=True, error_msg=None, value=self.kv[request.key])
         else:
             key = request.key
             self.cmd_output = {}
@@ -508,7 +530,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             print(str(self.cmd_output))
 
             return rpcService_pb2.putDelResponse(success=False, error_msg='no leader!!!')
-        else: # TODO: 如果是leader，更新自己的entries，通知peers，大部分回复后执行并返回结果
+        else:
             self.cmd_output = {}
             self.cmd_output['msgType']='put' if request.opera_type == 'put' else 'del'
             self.cmd_output['msg']='received PUT command from client' if request.opera_type == 'put' else 'received DEL command from client'
