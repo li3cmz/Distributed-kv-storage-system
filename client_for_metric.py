@@ -53,9 +53,7 @@ def print_server_response(response, data, opera_type):
         print_del_msg(response)
 
 
-def PutDel(request_cnt, port, key, value, client_port, connect_timeout_inseconds, opera_type):
-    with grpc.insecure_channel('localhost:'+str(port)) as channel:
-        stub = rpcService_pb2_grpc.RPCStub(channel)
+def PutDel(stub, request_cnt, port, key, value, client_port, connect_timeout_inseconds, opera_type):
 
 
         data = {'key': key, 'value': value, 'type':'client_append_entries', 'clientport':client_port, 'opera_type': opera_type}
@@ -113,21 +111,23 @@ def send():
     value = '0'*256
     num = REQUEST_NUM#10000
     request_cnt = 0
-    while num:
-        request_cnt+=1
-        port = random.choice(servers_ports)
-        oper = random.choice(operations)
-        if oper !='get':
-            PutDel(request_cnt, port, key, value, client_port, connect_timeout_inseconds, oper)
-        else:
-            Get(port, client_port, connect_timeout_inseconds, oper)
-        key=str(int(key)+1)
-        value=str(int(value)+1)
-        key=check(key,0)
-        value=check(value,1)
+    port = random.choice(servers_ports)
+    oper = random.choice(operations)
+    with grpc.insecure_channel('localhost:'+str(port)) as channel:
+        stub = rpcService_pb2_grpc.RPCStub(channel)
+        while num:
+            request_cnt+=1
+            if oper !='get':
+                PutDel(stub, request_cnt, port, key, value, client_port, connect_timeout_inseconds, oper)
+            else:
+                Get(port, client_port, connect_timeout_inseconds, oper)
+            key=str(int(key)+1)
+            value=str(int(value)+1)
+            key=check(key,0)
+            value=check(value,1)
 
-        num-=1
-        # time.sleep(0.01)
+            num-=1
+            # time.sleep(0.01)
 
 def recv():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -146,18 +146,16 @@ class clientSever(rpcService_pb2_grpc.RPCServicer):
         end_time=time.time()
         print("client recv: " + str(request.commit_index) + ' has been committed' + "end_time: "+ str(end_time)+ " start_time: "+request.start_time)
         self.dur_cnt+=1
-        self.dur_sum+=end_time-float(request.start_time)
+        self.dur_sum+=(end_time-float(request.start_time))
 
         if request.commit_index >=thresh:
             QPS = 1/(self.dur_sum/self.dur_cnt)
             print("QPS: ", QPS, (self.dur_sum/self.dur_cnt))
-            exit()
         return rpcService_pb2.applyResponse(success=True)
 
 if __name__ == '__main__':
     logging.basicConfig()
 
-    # send()
     p1 = Process(target=send, name='send', daemon=True)
     p1.start()
     p2 = Process(target=recv, name='recv', daemon=True)

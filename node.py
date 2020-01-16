@@ -72,6 +72,20 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                             'currentTerm':self.current_term}
         print(str(self.cmd_output))
 
+
+        self.stub_dict={}
+        self.channel_dict={}
+        for dst_id in self.peers:
+            # logging.info('leader：1. send append_entries to peer ' + dst_id)
+            peer_addr = str(self.peers[dst_id][0]) + ':' + str(self.peers[dst_id][1])
+            self.channel_dict[peer_addr] = grpc.insecure_channel(peer_addr)
+            self.stub_dict[peer_addr] = rpcService_pb2_grpc.RPCStub(self.channel_dict[peer_addr])
+        self.channel_dict['localhost:10005'] = grpc.insecure_channel('localhost:10005')
+        self.stub_dict['localhost:10005'] = rpcService_pb2_grpc.RPCStub(self.channel_dict['localhost:10005'])
+
+        self.channel_dict['localhost:10000'] = grpc.insecure_channel('localhost:10000')
+        self.stub_dict['localhost:10000'] = rpcService_pb2_grpc.RPCStub(self.channel_dict['localhost:10000'])
+
     # tick func
     def next_leader_election_timer_restart(self):
         self.next_leader_election_timer = Timer(self.next_leader_election + random.uniform(*self.wait_s), self.election_timeoutStep)
@@ -133,28 +147,28 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                 # logging.info('leader：1. send append_entries to peer ' + dst_id)
                 peer_addr = str(self.peers[dst_id][0]) + ':' + str(self.peers[dst_id][1])
 
-                with grpc.insecure_channel(peer_addr) as channel:
-                        stub = rpcService_pb2_grpc.RPCStub(channel)
-                        response = None
-                        try:
-                            response = stub.AppendEntries(rpcService_pb2.appendEntriesRequest(term=self.current_term,
-                                                                                        leaderId=self.id,
-                                                                                        prev_log_index=self.next_index[dst_id] - 1,
-                                                                                        prev_log_term=self.log.get_log_term(self.next_index[dst_id] - 1),
-                                                                                        entries=self.log.get_entries(self.next_index[dst_id]), #(16+1，就是我这个leader的log里面的最后一个的下一个|第0个)
-                                                                                        leader_commit=self.commit_index), self.connect_timeout_in_seconds)
-                        except:
-                            # print("----------------------------send appendrpc connect error!")
-                            self.cmd_output = {}
-                            self.cmd_output['msgType']='info'
-                            self.cmd_output['msg']='send msg fail'
-                            self.cmd_output['localID']=self.id
-                            self.cmd_output['to']=dst_id
-                            self.cmd_output['send_msg_type']='MsgHeartBeat' if self.log.get_entries(self.next_index[dst_id]) == [] else 'MsgApp'
-                            print(str(self.cmd_output))
+                # with grpc.insecure_channel(peer_addr) as channel:
+                stub = self.stub_dict[peer_addr]#rpcService_pb2_grpc.RPCStub(channel)
+                response = None
+                try:
+                    response = stub.AppendEntries(rpcService_pb2.appendEntriesRequest(term=self.current_term,
+                                                                                leaderId=self.id,
+                                                                                prev_log_index=self.next_index[dst_id] - 1,
+                                                                                prev_log_term=self.log.get_log_term(self.next_index[dst_id] - 1),
+                                                                                entries=self.log.get_entries(self.next_index[dst_id]), #(16+1，就是我这个leader的log里面的最后一个的下一个|第0个)
+                                                                                leader_commit=self.commit_index), self.connect_timeout_in_seconds)
+                except:
+                    # print("----------------------------send appendrpc connect error!")
+                    self.cmd_output = {}
+                    self.cmd_output['msgType']='info'
+                    self.cmd_output['msg']='send msg fail'
+                    self.cmd_output['localID']=self.id
+                    self.cmd_output['to']=dst_id
+                    self.cmd_output['send_msg_type']='MsgHeartBeat' if self.log.get_entries(self.next_index[dst_id]) == [] else 'MsgApp'
+                    print(str(self.cmd_output))
 
-                        if response !=None and response.type!='heartbeat_response':
-                            self.leader_do(data=response)
+                if response !=None and response.type!='heartbeat_response':
+                    self.leader_do(data=response)
             # 发送完心跳包，重新开始计时
             self.next_heartbeat_timer_restart()
             # print("\n")
@@ -397,32 +411,33 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                 self.cmd_output['localID']=self.id
                 print(str(self.cmd_output))
                 # logging.info(self.role + ': ' + 'Getredirect: GET client_append_entries to leader ' + self.leader_id)
-                with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
-                    stub = rpcService_pb2_grpc.RPCStub(channel)
-                    try:
-                        getRedirect_response = stub.GetRedirect(rpcService_pb2.getRedirectRequest(key=request.key, \
-                            value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type), self.connect_timeout_in_seconds)
-                        # print("\n")
-                        self.cmd_output = {}
-                        self.cmd_output['msgType']='info'
-                        self.cmd_output['msg']='redirect clientRequest to leader success'
-                        self.cmd_output['localID']=self.id
-                        self.cmd_output['leaderID']=self.leader_id
-                        print(str(self.cmd_output))
-                        if getRedirect_response.success:
-                            return rpcService_pb2.getResponse(success=True, error_msg=None, value=getRedirect_response.value)
-                        else:
-                            return rpcService_pb2.getResponse(success=False, error_msg=getRedirect_response.error_msg, value=None)
-                    except:
-                        self.cmd_output = {}
-                        self.cmd_output['msgType']='info'
-                        self.cmd_output['msg']=' redirect clientRequest to leader failed, maybe connect error'
-                        self.cmd_output['localID']=self.id
-                        self.cmd_output['leaderID']=self.leader_id
-                        print(str(self.cmd_output))
-                        # print("----------------------------getRedirect connect error!")
-                        # print("\n")
-                        return rpcService_pb2.getResponse(success=False, error_msg='getRedirect connect error', value=None)
+                #with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
+                stub = self.stub_dict['localhost:'+str(self.peers[self.leader_id][1])]
+                # stub = rpcService_pb2_grpc.RPCStub(channel)
+                try:
+                    getRedirect_response = stub.GetRedirect(rpcService_pb2.getRedirectRequest(key=request.key, \
+                        value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type), self.connect_timeout_in_seconds)
+                    # print("\n")
+                    self.cmd_output = {}
+                    self.cmd_output['msgType']='info'
+                    self.cmd_output['msg']='redirect clientRequest to leader success'
+                    self.cmd_output['localID']=self.id
+                    self.cmd_output['leaderID']=self.leader_id
+                    print(str(self.cmd_output))
+                    if getRedirect_response.success:
+                        return rpcService_pb2.getResponse(success=True, error_msg=None, value=getRedirect_response.value)
+                    else:
+                        return rpcService_pb2.getResponse(success=False, error_msg=getRedirect_response.error_msg, value=None)
+                except:
+                    self.cmd_output = {}
+                    self.cmd_output['msgType']='info'
+                    self.cmd_output['msg']=' redirect clientRequest to leader failed, maybe connect error'
+                    self.cmd_output['localID']=self.id
+                    self.cmd_output['leaderID']=self.leader_id
+                    print(str(self.cmd_output))
+                    # print("----------------------------getRedirect connect error!")
+                    # print("\n")
+                    return rpcService_pb2.getResponse(success=False, error_msg='getRedirect connect error', value=None)
             elif request.opera_type == 'get_noredirect':
                 self.cmd_output = {}
                 self.cmd_output['msgType']='get_noredirect'
@@ -496,29 +511,29 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             self.cmd_output['leaderID']=self.leader_id
             print(str(self.cmd_output))
             # logging.info(self.role + ': ' + 'PutDelRedirect: client_append_entries to leader ' + self.leader_id)
-            with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
-                stub = rpcService_pb2_grpc.RPCStub(channel)
-                try:
-                    putDelRedirect_response = stub.PutDelRedirect(rpcService_pb2.putDelRedirectRequest(key=request.key, \
-                        value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type, start_time=request.start_time), self.connect_timeout_in_seconds)
-                    # print("\n")
-                    self.cmd_output = {}
-                    self.cmd_output['msgType']='info'
-                    self.cmd_output['msg']='redirect clientRequest to leader success'
-                    self.cmd_output['localID']=self.id
-                    self.cmd_output['leaderID']=self.leader_id
-                    print(str(self.cmd_output))
-                    return rpcService_pb2.putDelResponse(success=putDelRedirect_response.success, error_msg=None)
-                except:
-                    self.cmd_output = {}
-                    self.cmd_output['msgType']='info'
-                    self.cmd_output['msg']='redirect clientRequest to leader failed, maybe connect error'
-                    self.cmd_output['localID']=self.id
-                    self.cmd_output['leaderID']=self.leader_id
-                    print(str(self.cmd_output))
-                    # print("----------------------------putDelRedirectResponse connect error!")
-                    # print("\n")
-                    return rpcService_pb2.putDelResponse(success=False, error_msg='putDelRedirectResponse connect error')
+            # with grpc.insecure_channel('localhost:'+str(self.peers[self.leader_id][1])) as channel:
+            stub = self.stub_dict['localhost:'+str(self.peers[self.leader_id][1])]#rpcService_pb2_grpc.RPCStub(channel)
+            try:
+                putDelRedirect_response = stub.PutDelRedirect(rpcService_pb2.putDelRedirectRequest(key=request.key, \
+                    value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type, start_time=request.start_time), self.connect_timeout_in_seconds)
+                # print("\n")
+                self.cmd_output = {}
+                self.cmd_output['msgType']='info'
+                self.cmd_output['msg']='redirect clientRequest to leader success'
+                self.cmd_output['localID']=self.id
+                self.cmd_output['leaderID']=self.leader_id
+                print(str(self.cmd_output))
+                return rpcService_pb2.putDelResponse(success=putDelRedirect_response.success, error_msg=None)
+            except:
+                self.cmd_output = {}
+                self.cmd_output['msgType']='info'
+                self.cmd_output['msg']='redirect clientRequest to leader failed, maybe connect error'
+                self.cmd_output['localID']=self.id
+                self.cmd_output['leaderID']=self.leader_id
+                print(str(self.cmd_output))
+                # print("----------------------------putDelRedirectResponse connect error!")
+                # print("\n")
+                return rpcService_pb2.putDelResponse(success=False, error_msg='putDelRedirectResponse connect error')
         elif self.role == 'candidate':
             # logging.info(self.role + ': ' + 'no leader!!!')
             # print("\n")
@@ -651,32 +666,32 @@ class Node(rpcService_pb2_grpc.RPCServicer):
 
                     peer_addr = str(self.peers[dst_id][0]) + ':' + str(self.peers[dst_id][1])
                     msgReject = True
-                    with grpc.insecure_channel(peer_addr) as channel:
-                        stub = rpcService_pb2_grpc.RPCStub(channel)
-                        try:
-                            response = stub.RequestVote(rpcService_pb2.requestVoteRequest(term=self.current_term,
-                                                                                            candidateId=self.id,
-                                                                                            last_log_index=self.log.last_log_index,
-                                                                                            last_log_term=self.log.last_log_term), self.connect_timeout_in_seconds)
-                            if response.votedGranted:
-                                msgReject=False
-                                # logging.info('candidate: 1. recv request_vote_response from follower ' + str(self.peers[dst_id][0]) + ": " + str(self.peers[dst_id][1]))
-                            self.vote_ids[response.responserId] = response.votedGranted
-                            self.cmd_output = {}
-                            self.cmd_output = {'msgType':'MsgVoteResp',
-                                            'msg':'received MsgVoteResp',
-                                            'localID':self.id,
-                                            'currentTerm':self.current_term,
-                                            'msgFrom':response.responserId,
-                                            'msgReject':msgReject}
-                            print(str(self.cmd_output))
-                        except:
-                            self.cmd_output = {}
-                            self.cmd_output = {'msgType':'info',
-                                            'msg':'send RequestVote error',
-                                            'localID':self.id,
-                                            'to':dst_id}
-                            print(str(self.cmd_output))
+                    # with grpc.insecure_channel(peer_addr) as channel:
+                    stub = self.stub_dict[peer_addr]#rpcService_pb2_grpc.RPCStub(channel)
+                    try:
+                        response = stub.RequestVote(rpcService_pb2.requestVoteRequest(term=self.current_term,
+                                                                                        candidateId=self.id,
+                                                                                        last_log_index=self.log.last_log_index,
+                                                                                        last_log_term=self.log.last_log_term), self.connect_timeout_in_seconds)
+                        if response.votedGranted:
+                            msgReject=False
+                            # logging.info('candidate: 1. recv request_vote_response from follower ' + str(self.peers[dst_id][0]) + ": " + str(self.peers[dst_id][1]))
+                        self.vote_ids[response.responserId] = response.votedGranted
+                        self.cmd_output = {}
+                        self.cmd_output = {'msgType':'MsgVoteResp',
+                                        'msg':'received MsgVoteResp',
+                                        'localID':self.id,
+                                        'currentTerm':self.current_term,
+                                        'msgFrom':response.responserId,
+                                        'msgReject':msgReject}
+                        print(str(self.cmd_output))
+                    except:
+                        self.cmd_output = {}
+                        self.cmd_output = {'msgType':'info',
+                                        'msg':'send RequestVote error',
+                                        'localID':self.id,
+                                        'to':dst_id}
+                        print(str(self.cmd_output))
 
                 vote_count = sum(list(self.vote_ids.values()))
                 if vote_count >= (len(self.peers)+1)//2:  #2/3 3/4
@@ -798,12 +813,12 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                     self.commit_index = N
                     start_time = self.log.get_one_entries(self.commit_index-1).split(' ')[-2]
                     if self.client_port:
-                        with grpc.insecure_channel('localhost:'+self.client_port) as channel:
-                            stub = rpcService_pb2_grpc.RPCStub(channel)
-                            try:
-                                response = stub.Apply(rpcService_pb2.applyRequest(commit_index=self.commit_index, start_time=start_time), self.connect_timeout_in_seconds)
-                            except:
-                                pass
+                        # with grpc.insecure_channel('localhost:'+self.client_port) as channel:
+                        stub = self.stub_dict['localhost:'+self.client_port]#rpcService_pb2_grpc.RPCStub(channel)
+                        try:
+                            response = stub.Apply(rpcService_pb2.applyRequest(commit_index=self.commit_index, start_time=start_time), self.connect_timeout_in_seconds)
+                        except:
+                            pass
                     break
             else:
                 break
