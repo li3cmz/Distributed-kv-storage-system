@@ -59,10 +59,10 @@ class Node(rpcService_pb2_grpc.RPCServicer):
         self.client_port = None
 
         # tick
-        self.t_heartbeat = 2
-        self.next_leader_election = 3
+        self.t_heartbeat = 0.15#2
+        self.next_leader_election = 1.5#3
         self.connect_timeout_in_seconds=0.1
-        self.wait_s = (1, 2)
+        self.wait_s = (0,1.5)#(1, 2)
         ## 心跳或者entry msg计时器/或者叫选举计时器
         self.next_leader_election_timer_restart()
 
@@ -79,7 +79,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
     def next_leader_election_timer_cancel(self):
         self.next_leader_election_timer.cancel()
     def next_heartbeat_timer_restart(self):
-        self.next_heartbeat_timer = Timer(self.t_heartbeat + random.uniform(*self.wait_s), self.next_heartbeat_timeoutStep)
+        self.next_heartbeat_timer = Timer(self.t_heartbeat, self.next_heartbeat_timeoutStep) #+ random.uniform(*self.wait_s)
         self.next_heartbeat_timer.start()
     def next_heartbeat_timer_cancel(self):
         self.next_heartbeat_timer.cancel()
@@ -500,7 +500,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                 stub = rpcService_pb2_grpc.RPCStub(channel)
                 try:
                     putDelRedirect_response = stub.PutDelRedirect(rpcService_pb2.putDelRedirectRequest(key=request.key, \
-                        value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type), self.connect_timeout_in_seconds)
+                        value=request.value, type=request.type, clientport=request.clientport, opera_type=request.opera_type, start_time=request.start_time), self.connect_timeout_in_seconds)
                     # print("\n")
                     self.cmd_output = {}
                     self.cmd_output['msgType']='info'
@@ -760,7 +760,7 @@ class Node(rpcService_pb2_grpc.RPCServicer):
             entry_list.append(data.key)
             entry_list.append(data.value)
             entry_list.append(data.type)
-            # entry_list.append(data.clientport)
+            entry_list.append(data.start_time)
             entry_list.append(data.opera_type)
             entry_str = ' '.join(entry_list)
             self.log.append_entries(self.log.last_log_index, [entry_str])
@@ -796,11 +796,12 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                     count += 1
                 if count >= (len(self.peers)+1)//2: #2/3 3/4
                     self.commit_index = N
+                    start_time = self.log.get_one_entries(self.commit_index-1).split(' ')[-2]
                     if self.client_port:
                         with grpc.insecure_channel('localhost:'+self.client_port) as channel:
                             stub = rpcService_pb2_grpc.RPCStub(channel)
                             try:
-                                response = stub.Apply(rpcService_pb2.applyRequest(commit_index=self.commit_index), self.connect_timeout_in_seconds)
+                                response = stub.Apply(rpcService_pb2.applyRequest(commit_index=self.commit_index, start_time=start_time), self.connect_timeout_in_seconds)
                             except:
                                 pass
                     break

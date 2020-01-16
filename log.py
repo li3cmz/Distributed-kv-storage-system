@@ -50,6 +50,8 @@ class Log(object):
         # print('get_entries')
         return self.entries[max(0, next_index):] #TODO
     
+    def get_one_entries(self,index):
+        return self.entries[index]
 
     def delete_entries(self, prev_log_index):
         # print('delete_entries')

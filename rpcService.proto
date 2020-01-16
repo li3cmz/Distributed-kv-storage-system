@@ -62,6 +62,7 @@ message putDelRedirectRequest {
     string type = 3;
     string clientport = 4;
     string opera_type = 5;
+    string start_time = 6;
 }
 message putDelRedirectResponse {
     bool success = 1;
@@ -75,6 +76,7 @@ message putDelRequest {
     string type = 3;
     string clientport = 4;
     string opera_type = 5;
+    string start_time = 6;
 }
 message putDelResponse {
     bool success = 1;
@@ -100,6 +102,7 @@ message getResponse {
 
 message applyRequest {
     int32 commit_index = 1;
+    string start_time = 2;
 }
 message applyResponse {
     bool success = 1;

@@ -11,6 +11,9 @@ import rpcService_pb2_grpc
 
 from multiprocessing import Process
 
+REQUEST_NUM=1000
+thresh=1000
+
 def print_put_msg(response):
     if response.success:
         print("send PUT data to server success!!!!")
@@ -50,23 +53,19 @@ def print_server_response(response, data, opera_type):
         print_del_msg(response)
 
 
-def PutDel(port, client_port, connect_timeout_inseconds, opera_type):
+def PutDel(request_cnt, port, key, value, client_port, connect_timeout_inseconds, opera_type):
     with grpc.insecure_channel('localhost:'+str(port)) as channel:
         stub = rpcService_pb2_grpc.RPCStub(channel)
 
-        # produce data for request
-        if opera_type == 'put':
-            value = str(time.time())
-        else:
-            value = None
-        data = {'key': 'x', 'value': value, 'type':'client_append_entries', 'clientport':client_port, 'opera_type': opera_type}
+
+        data = {'key': key, 'value': value, 'type':'client_append_entries', 'clientport':client_port, 'opera_type': opera_type}
 
         # print client operation
         print_client_operation(opera_type, data, port)
         # send request to server
         try:
             response = stub.PutDel(rpcService_pb2.putDelRequest(key=data['key'], value=data['value'], \
-                type=data['type'], clientport=data['clientport'], opera_type=data['opera_type']), connect_timeout_inseconds)
+                type=data['type'], clientport=data['clientport'], opera_type=data['opera_type'], start_time=str(time.time())), connect_timeout_inseconds)
             print_server_response(response, data, opera_type)
         except:
             print("connect server error!")
@@ -93,21 +92,42 @@ def Get(port, client_port, connect_timeout_inseconds, opera_type):
         # print("\n")
 
 
+def check(str_,mode):
+    if mode==0:
+        len_ = len(str_)
+        zero_needed='0'*(8-len_)
+        return zero_needed+str_
+    else:
+        len_ = len(str_)
+        zero_needed='0'*(256-len_)
+        return zero_needed+str_
+
+
 
 def send():
-    servers_ports = [10001,10002,10003,10004]
+    servers_ports = [10001]#,10002,10003,10004]
     connect_timeout_inseconds = 0.1
     operations = ['put']#, 'get', 'del']
     client_port = str(10005)
-    while True:
+    key = '0'*8
+    value = '0'*256
+    num = REQUEST_NUM#10000
+    request_cnt = 0
+    while num:
+        request_cnt+=1
         port = random.choice(servers_ports)
         oper = random.choice(operations)
         if oper !='get':
-            PutDel(port, client_port, connect_timeout_inseconds, oper)
+            PutDel(request_cnt, port, key, value, client_port, connect_timeout_inseconds, oper)
         else:
             Get(port, client_port, connect_timeout_inseconds, oper)
+        key=str(int(key)+1)
+        value=str(int(value)+1)
+        key=check(key,0)
+        value=check(value,1)
 
-        # time.sleep(10)
+        num-=1
+        # time.sleep(0.01)
 
 def recv():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -118,8 +138,20 @@ def recv():
 
 
 class clientSever(rpcService_pb2_grpc.RPCServicer):
+    def __init__(self):
+        self.dur_sum=0
+        self.dur_cnt=0
+
     def Apply(self, request, context):
-        print("client recv: " + str(request.commit_index) + ' has been committed\n')
+        end_time=time.time()
+        print("client recv: " + str(request.commit_index) + ' has been committed' + "end_time: "+ str(end_time)+ " start_time: "+request.start_time)
+        self.dur_cnt+=1
+        self.dur_sum+=end_time-float(request.start_time)
+
+        if request.commit_index >=thresh:
+            QPS = 1/(self.dur_sum/self.dur_cnt)
+            print("QPS: ", QPS, (self.dur_sum/self.dur_cnt))
+            exit()
         return rpcService_pb2.applyResponse(success=True)
 
 if __name__ == '__main__':
