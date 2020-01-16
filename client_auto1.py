@@ -71,7 +71,7 @@ def PutDel(port, client_port, connect_timeout_inseconds, opera_type):
             print_server_response(response, data, opera_type)
         except:
             print("connect server error!")
-        print("\n")
+        # print("\n")
 
 
 def Get(port, client_port, connect_timeout_inseconds, opera_type):
@@ -91,14 +91,14 @@ def Get(port, client_port, connect_timeout_inseconds, opera_type):
             print_server_response(response, data, opera_type)
         except:
             print("connect server error!")
-        print("\n")
+        # print("\n")
 
 
 
 def send():
     servers_ports = [10001,10002,10003,10004]
     connect_timeout_inseconds = 0.1
-    operations = ['put', 'get', 'del']
+    operations = ['put']#, 'get', 'del']
     client_port = str(10005)
     while True:
         port = random.choice(servers_ports)
@@ -110,28 +110,28 @@ def send():
 
         time.sleep(10)
 
-# def recv():
-#     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-#     rpcService_pb2_grpc.add_RPCServicer_to_server(clientSever(), server)
-#     server.add_insecure_port('[::]:'+str(10005))
-#     server.start()
-#     server.wait_for_termination()
+def recv():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    rpcService_pb2_grpc.add_RPCServicer_to_server(clientSever(), server)
+    server.add_insecure_port('[::]:'+str(10005))
+    server.start()
+    server.wait_for_termination()
 
 
-# class clientSever(rpcService_pb2_grpc.RPCServicer):
-#     def Apply(self, request, context):
-#         print("client recv: " + str(request.commit_index) + ' has been committed')
-#         return rpcService_pb2.applyResponse(success=True)
+class clientSever(rpcService_pb2_grpc.RPCServicer):
+    def Apply(self, request, context):
+        print("client recv: " + str(request.commit_index) + ' has been committed\n')
+        return rpcService_pb2.applyResponse(success=True)
 
 if __name__ == '__main__':
     logging.basicConfig()
 
-    send()
-    # p1 = Process(target=send, name='send', daemon=True)
-    # p1.start()
-    # p2 = Process(target=recv, name='recv', daemon=True)
-    # p2.start()
+    # send()
+    p1 = Process(target=send, name='send', daemon=True)
+    p1.start()
+    p2 = Process(target=recv, name='recv', daemon=True)
+    p2.start()
 
 
-    # p1.join()
-    # p2.join()
+    p1.join()
+    p2.join()

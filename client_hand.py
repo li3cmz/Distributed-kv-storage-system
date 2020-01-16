@@ -130,7 +130,30 @@ def send():
 
         # time.sleep(10)
 
+
+def recv():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    rpcService_pb2_grpc.add_RPCServicer_to_server(clientSever(), server)
+    server.add_insecure_port('[::]:'+str(10006))
+    server.start()
+    server.wait_for_termination()
+
+
+class clientSever(rpcService_pb2_grpc.RPCServicer):
+    def Apply(self, request, context):
+        print("client recv: " + str(request.commit_index) + ' has been committed')
+        return rpcService_pb2.applyResponse(success=True)
+
+
 if __name__ == '__main__':
     logging.basicConfig()
 
     send()
+    # p1 = Process(target=send, name='send', daemon=True)
+    # p1.start()
+    # p2 = Process(target=recv, name='recv', daemon=True)
+    # p2.start()
+
+
+    # p1.join()
+    # p2.join()

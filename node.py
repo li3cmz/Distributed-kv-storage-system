@@ -796,8 +796,13 @@ class Node(rpcService_pb2_grpc.RPCServicer):
                     count += 1
                 if count >= (len(self.peers)+1)//2: #2/3 3/4
                     self.commit_index = N
-                    # logging.info("leader：1. commit_index + 1, leader's commit index is " + str(self.commit_index))
+                    if self.client_port:
+                        with grpc.insecure_channel('localhost:'+self.client_port) as channel:
+                            stub = rpcService_pb2_grpc.RPCStub(channel)
+                            try:
+                                response = stub.Apply(rpcService_pb2.applyRequest(commit_index=self.commit_index), self.connect_timeout_in_seconds)
+                            except:
+                                pass
                     break
             else:
-                # logging.info('leader：1. commit_index = ' + str(self.commit_index))
                 break
